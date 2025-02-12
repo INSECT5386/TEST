@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 챗봇</title>
-    <script defer src="script.js"></script> <!-- JavaScript 파일 연결 -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>챗봇</title>
 </head>
 <body>
-    <h1>AI 챗봇</h1>
-    <input type="text" id="userInput" placeholder="질문을 입력하세요">
-    <button onclick="sendMessage()">전송</button>
-    <p id="response"></p>
+  <h1>챗봇</h1>
+  <input type="text" id="userMessage" placeholder="메시지를 입력하세요" />
+  <button id="sendMessageButton">메시지 보내기</button>
+
+  <div id="chatbotResponse"></div>
+
+  <script src="app.js"></script> <!-- app.js를 연결 -->
 </body>
 </html>
