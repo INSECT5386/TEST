@@ -14,3 +14,4 @@ async function getGptResponse() {
 
 // 페이지 로드 시 GPT-2 응답 받아오기
 window.onload = getGptResponse;
+
