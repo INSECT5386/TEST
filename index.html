@@ -9,6 +9,8 @@
 <body>
   <h1>ONNX.js Model Inference</h1>
 
+  <div id="output"></div>
+
   <script>
     async function loadAndRunModel() {
       try {
@@ -18,14 +20,18 @@
         // 모델 로드 (Raw URL 사용)
         await session.loadModel('https://raw.githubusercontent.com/INSECT5386/TEST/main/model_int8.onnx');  // 모델 파일 Raw URL
 
-        // 예시 입력 데이터를 텐서로 변환
+        // 예시 입력 데이터 텐서로 변환 (TinyStories 모델에 맞는 데이터 형식 필요)
         const inputTensor = new onnx.Tensor(new Float32Array([1, 2, 3, 4]), 'float32', [1, 4]);
 
         // 모델 실행
         const outputMap = await session.run([inputTensor]);
 
-        // 출력 결과
-        console.log('Output:', outputMap);
+        // 출력 결과 (outputMap에서 적절한 값 추출)
+        const output = outputMap.values().next().value;
+
+        // 결과 출력
+        document.getElementById('output').textContent = `Output: ${output.data}`;
+        console.log('Output:', output.data);
       } catch (error) {
         console.error('Error loading or running the model:', error);
       }
