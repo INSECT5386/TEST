@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ONNX.js Model Load Test</title>
-  <script src="https://cdn.jsdelivr.net/npm/onnxjs@1.0.0/dist/onnx.min.js"></script> <!-- ONNX.js 라이브러리 로드 -->
+  <script src="https://cdn.jsdelivr.net/npm/onnxjs@1.0.0/dist/onnx.min.js"></script> <!-- ONNX.js 로드 -->
 </head>
 <body>
   <h1>ONNX.js Model Inference</h1>
 
   <script>
-    async function loadAndRunModel() {
+    window.onload = async function () {
       try {
         // ONNX 세션 생성
         const session = new onnx.InferenceSession();
@@ -30,8 +30,6 @@
         console.error('Error loading or running the model:', error);
       }
     }
-
-    loadAndRunModel();
   </script>
 </body>
 </html>
