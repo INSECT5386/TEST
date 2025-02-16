@@ -10,7 +10,8 @@
   <h1>ONNX.js Model Inference</h1>
 
   <script>
-    window.onload = async function () {
+    // 페이지가 완전히 로드된 후 실행
+    document.addEventListener('DOMContentLoaded', async function () {
       try {
         // ONNX 세션 생성
         const session = new onnx.InferenceSession();
@@ -29,7 +30,7 @@
       } catch (error) {
         console.error('Error loading or running the model:', error);
       }
-    }
+    });
   </script>
 </body>
 </html>
