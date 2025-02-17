@@ -3,25 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ONNX Model with GitHub Pages</title>
+    <title>ONNX Model in Browser</title>
     <script src="https://cdn.jsdelivr.net/npm/onnxjs"></script>
 </head>
 <body>
-    <h1>ONNX Model Example on GitHub Pages</h1>
+    <h1>ONNX Model in Browser</h1>
+    <button onclick="loadModel()">Load and Run Model</button>
     <div id="output"></div>
 
     <script>
         async function loadModel() {
-            const modelUrl = 'https://insect5386.github.io/TEST/model.onnx'; // 모델 파일 URL
-            const session = new onnx.InferenceSession();
-            await session.loadModel(modelUrl);
+            try {
+                const session = new onnx.InferenceSession();
+                // 모델 파일을 URL로 제공 (예: GitHub, Cloudflare 등에서 호스팅한 .onnx 파일)
+                await session.loadModel("https://insect5386.github.io/TEST/model_quantized.onnx");
+                console.log("Model Loaded!");
 
-            const input = new onnx.Tensor(new Float32Array([/* 입력 데이터 */]), 'float32', [1, 3]);
-            const output = await session.run([input]);
-            document.getElementById('output').innerHTML = 'Output: ' + output;
+                // 예시 입력 데이터 (모델의 요구 사항에 맞게 변경)
+                const inputData = new onnx.Tensor(new Float32Array([0.5, 0.2]), 'float32', [1, 2]);  // 예시 데이터
+                const output = await session.run([inputData]);
+                console.log(output);
+
+                document.getElementById("output").textContent = `Model Output: ${output[0].data}`;
+            } catch (error) {
+                console.error("Error loading or running the model", error);
+            }
         }
-
-        loadModel();
     </script>
 </body>
 </html>
