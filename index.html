@@ -16,7 +16,7 @@
             try {
                 const session = new onnx.InferenceSession();
                 // 모델 파일을 URL로 제공 (예: GitHub, Cloudflare 등에서 호스팅한 .onnx 파일)
-                await session.loadModel("https://insect5386.github.io/TEST/model_quantized.onnx");
+                await session.loadModel("https://insect5386.github.io/TEST/converted_model.onnx");
                 console.log("Model Loaded!");
 
                 // 예시 입력 데이터 (모델의 요구 사항에 맞게 변경)
