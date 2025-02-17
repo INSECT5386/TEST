@@ -1,41 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ONNX.js Model Load Test</title>
-  <!-- ONNX.js 라이브러리 로딩 -->
-  <script src="https://unpkg.com/onnxjs@1.0.0/dist/onnx.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONNX Model with GitHub Pages</title>
+    <script src="https://cdn.jsdelivr.net/npm/onnxjs"></script>
 </head>
 <body>
-  <h1>ONNX.js Model Inference</h1>
+    <h1>ONNX Model Example on GitHub Pages</h1>
+    <div id="output"></div>
 
-  <script>
-    // onnx가 정상적으로 로드되었는지 확인
-    console.log(onnx);  // undefined이면 onnx.min.js가 로드되지 않은 것
+    <script>
+        async function loadModel() {
+            const modelUrl = 'https://insect5386.github.io/TEST/model.onnx'; // 모델 파일 URL
+            const session = new onnx.InferenceSession();
+            await session.loadModel(modelUrl);
 
-    async function loadAndRunModel() {
-      try {
-        // ONNX 세션 생성
-        const session = new onnx.InferenceSession();
+            const input = new onnx.Tensor(new Float32Array([/* 입력 데이터 */]), 'float32', [1, 3]);
+            const output = await session.run([input]);
+            document.getElementById('output').innerHTML = 'Output: ' + output;
+        }
 
-        // 모델 로드 (Raw URL 사용)
-        await session.loadModel('https://raw.githubusercontent.com/INSECT5386/TEST/main/model_int8.onnx');  // 모델 파일 Raw URL
-
-        // 예시 입력 데이터를 텐서로 변환
-        const inputTensor = new onnx.Tensor(new Float32Array([1, 2, 3, 4]), 'float32', [1, 4]);
-
-        // 모델 실행
-        const outputMap = await session.run([inputTensor]);
-
-        // 출력 결과
-        console.log('Output:', outputMap);
-      } catch (error) {
-        console.error('Error loading or running the model:', error);
-      }
-    }
-
-    loadAndRunModel();
-  </script>
+        loadModel();
+    </script>
 </body>
 </html>
