@@ -3,48 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transformer.js NLP Demo</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/transformers.js"></script>
+    <title>BERT with ONNX.js</title>
+    <script src="https://cdn.jsdelivr.net/npm/onnxjs"></script>
 </head>
 <body>
-    <h1>Transformer.js NLP Demo</h1>
-    <label for="inputText">Enter Text:</label>
-    <input type="text" id="inputText" placeholder="Enter some text">
-    <button onclick="runModel()">Run Model</button>
+    <h1>BERT with ONNX.js</h1>
+    <textarea id="inputText" rows="4" cols="50" placeholder="Enter text..."></textarea>
+    <br><br>
+    <button onclick="runModel()">Get Prediction</button>
 
-    <h2>Model Output:</h2>
+    <h2>Model Prediction:</h2>
     <pre id="output"></pre>
 
     <script>
-        let model, tokenizer;
-
+        // ONNX.js 모델 로드
+        let session;
         async function loadModel() {
-            // Load the BERT model and tokenizer
-            model = await transformers.AutoModel.fromPretrained('bert-base-uncased');
-            tokenizer = await transformers.AutoTokenizer.fromPretrained('bert-base-uncased');
-            console.log("Model and tokenizer loaded!");
+            session = new onnx.InferenceSession();
+            await session.loadModel("path/to/your/bert.onnx");  // BERT 모델 경로
+            console.log("Model loaded!");
         }
 
+        // 모델 실행 함수
         async function runModel() {
             const inputText = document.getElementById('inputText').value;
-
-            if (inputText.trim() === '') {
+            if (!inputText.trim()) {
                 alert('Please enter some text!');
                 return;
             }
 
-            // Tokenize the input text
-            const inputs = tokenizer.encode(inputText);
+            // 텍스트 전처리 (예: 토크나이징)
+            const tokens = tokenize(inputText);  // 이 부분은 모델에 맞게 수정 필요
 
-            // Run the model with the tokenized input
-            const output = await model(inputs);
+            // ONNX 모델에 입력할 텐서 준비
+            const inputTensor = new onnx.Tensor(tokens, 'float32', [1, tokens.length]);
 
-            // Display the output
-            document.getElementById('output').textContent = JSON.stringify(output, null, 2);
+            // 모델 실행
+            const output = await session.run([inputTensor]);
+
+            // 출력 결과 처리
+            const result = output.values(); // 모델 출력
+            document.getElementById('output').textContent = JSON.stringify(result, null, 2);
         }
 
-        // Load the model when the page is loaded
+        // 간단한 토크나이징 예시 (BERT 모델에 맞는 토크나이저를 사용해야 함)
+        function tokenize(text) {
+            // 간단한 공백 기준 토크나이징 예시 (BERT에서는 더 복잡한 전처리가 필요)
+            return text.split(' ').map(word => word.charCodeAt(0));  // BERT 토크나이저는 다르게 구현됨
+        }
+
+        // 모델 로드
         loadModel();
     </script>
 </body>
