@@ -20,7 +20,7 @@
         let session;
         async function loadModel() {
             session = new onnx.InferenceSession();
-            await session.loadModel("/TEST/model.onnx");  // BERT 모델 경로
+            await session.loadModel("/TEST/model_quantized.onnx (1)");  // BERT 모델 경로
             console.log("Model loaded!");
         }
 
