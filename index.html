@@ -20,7 +20,7 @@
         let session;
         async function loadModel() {
             session = new onnx.InferenceSession();
-            await session.loadModel("path/to/your/bert.onnx");  // BERT 모델 경로
+            await session.loadModel("/TEST/float16-bert.onnx");  // BERT 모델 경로
             console.log("Model loaded!");
         }
 
@@ -36,7 +36,7 @@
             const tokens = tokenize(inputText);  // 이 부분은 모델에 맞게 수정 필요
 
             // ONNX 모델에 입력할 텐서 준비
-            const inputTensor = new onnx.Tensor(tokens, 'float32', [1, tokens.length]);
+            const inputTensor = new onnx.Tensor(tokens, 'float16', [1, tokens.length]);
 
             // 모델 실행
             const output = await session.run([inputTensor]);
