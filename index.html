@@ -3,32 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ONNX Model in Browser</title>
-    <script src="https://cdn.jsdelivr.net/npm/onnxjs"></script>
+    <title>Transformer.js NLP Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/transformers.js"></script>
 </head>
 <body>
-    <h1>ONNX Model in Browser</h1>
-    <button onclick="loadModel()">Load and Run Model</button>
-    <div id="output"></div>
+    <h1>Transformer.js NLP Demo</h1>
+    <label for="inputText">Enter Text:</label>
+    <input type="text" id="inputText" placeholder="Enter some text">
+    <button onclick="runModel()">Run Model</button>
+
+    <h2>Model Output:</h2>
+    <pre id="output"></pre>
 
     <script>
+        let model, tokenizer;
+
         async function loadModel() {
-            try {
-                const session = new onnx.InferenceSession();
-                // 모델 파일을 URL로 제공 (예: GitHub, Cloudflare 등에서 호스팅한 .onnx 파일)
-                await session.loadModel("https://insect5386.github.io/TEST/converted_model.onnx");
-                console.log("Model Loaded!");
-
-                // 예시 입력 데이터 (모델의 요구 사항에 맞게 변경)
-                const inputData = new onnx.Tensor(new Float32Array([0.5, 0.2]), 'float32', [1, 2]);  // 예시 데이터
-                const output = await session.run([inputData]);
-                console.log(output);
-
-                document.getElementById("output").textContent = `Model Output: ${output[0].data}`;
-            } catch (error) {
-                console.error("Error loading or running the model", error);
-            }
+            // Load the BERT model and tokenizer
+            model = await transformers.AutoModel.fromPretrained('bert-base-uncased');
+            tokenizer = await transformers.AutoTokenizer.fromPretrained('bert-base-uncased');
+            console.log("Model and tokenizer loaded!");
         }
+
+        async function runModel() {
+            const inputText = document.getElementById('inputText').value;
+
+            if (inputText.trim() === '') {
+                alert('Please enter some text!');
+                return;
+            }
+
+            // Tokenize the input text
+            const inputs = tokenizer.encode(inputText);
+
+            // Run the model with the tokenized input
+            const output = await model(inputs);
+
+            // Display the output
+            document.getElementById('output').textContent = JSON.stringify(output, null, 2);
+        }
+
+        // Load the model when the page is loaded
+        loadModel();
     </script>
 </body>
 </html>
