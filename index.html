@@ -3,42 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Transformers.js 예시</title>
-  <!-- CDN에서 transformers.js 로드 -->
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.3.3/dist/transformers.min.js"></script>
+  <title>TensorFlow.js Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script> <!-- TensorFlow.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/toxicity"></script> <!-- Example model -->
 </head>
 <body>
-  <h1>Transformers.js 예시</h1>
+  <h1>TensorFlow.js 예시</h1>
   <div>
-    <p><strong>입력 문장:</strong> <span id="input-text">Hello, how are you?</span></p>
-    <p><strong>생성된 문장:</strong> <span id="generated-text">Loading...</span></p>
+    <p><strong>입력 문장:</strong> <span id="input-text">I love machine learning!</span></p>
+    <p><strong>결과:</strong> <span id="result-text">Loading...</span></p>
   </div>
 
-  <script type="module">
-    // 모델 로딩을 위한 코드
-    import { GPT2LMHeadModel, GPT2Tokenizer } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.3.3/dist/transformers.min.js";
-
-    // 모델을 사용하는 함수
+  <script>
+    // TensorFlow.js 모델 로드 및 사용 예시
     async function runModel() {
-      // GPT-2 모델과 토크나이저 로드
-      const model = await GPT2LMHeadModel.fromPretrained("gpt2");
-      const tokenizer = await GPT2Tokenizer.fromPretrained("gpt2");
+      // 모델 로드 (예시: Toxicity 모델)
+      const model = await toxicity.load();
 
       // 입력 텍스트 설정
-      const inputText = 'Hello, how are you?';
-      const inputIds = tokenizer.encode(inputText, { return_tensors: 'pt' });
+      const inputText = 'I love machine learning!';
 
-      // 텍스트 생성 (최대 50자까지)
-      const output = await model.generate(inputIds, { max_length: 50 });
+      // 모델 실행
+      const predictions = await model.classify(inputText);
 
-      // 생성된 텍스트 디코딩
-      const decodedOutput = tokenizer.decode(output[0], { skip_special_tokens: true });
-
-      // 생성된 텍스트를 HTML에 출력
-      document.getElementById('generated-text').innerText = decodedOutput;
+      // 결과 출력
+      const resultText = predictions.map(prediction => `${prediction.label}: ${prediction.results[0].match}`).join('<br>');
+      document.getElementById('result-text').innerHTML = resultText;
     }
 
-    // 모델 실행
     runModel();
   </script>
 </body>
