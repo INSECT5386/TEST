@@ -1,59 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BERT with ONNX.js</title>
-    <script src="https://cdn.jsdelivr.net/npm/onnxjs"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transformers.js Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.3.3/dist/transformers.min.js"></script>
 </head>
 <body>
-    <h1>BERT with ONNX.js</h1>
-    <textarea id="inputText" rows="4" cols="50" placeholder="Enter text..."></textarea>
-    <br><br>
-    <button onclick="runModel()">Get Prediction</button>
-
-    <h2>Model Prediction:</h2>
-    <pre id="output"></pre>
-
-    <script>
-        // ONNX.js 모델 로드
-        let session;
-        async function loadModel() {
-            session = new onnx.InferenceSession();
-            await session.loadModel("/TEST/model_quantized.onnx (1)");  // BERT 모델 경로
-            console.log("Model loaded!");
-        }
-
-        // 모델 실행 함수
-        async function runModel() {
-            const inputText = document.getElementById('inputText').value;
-            if (!inputText.trim()) {
-                alert('Please enter some text!');
-                return;
-            }
-
-            // 텍스트 전처리 (예: 토크나이징)
-            const tokens = tokenize(inputText);  // 이 부분은 모델에 맞게 수정 필요
-
-            // ONNX 모델에 입력할 텐서 준비
-            const inputTensor = new onnx.Tensor(tokens, 'float16', [1, tokens.length]);
-
-            // 모델 실행
-            const output = await session.run([inputTensor]);
-
-            // 출력 결과 처리
-            const result = output.values(); // 모델 출력
-            document.getElementById('output').textContent = JSON.stringify(result, null, 2);
-        }
-
-        // 간단한 토크나이징 예시 (BERT 모델에 맞는 토크나이저를 사용해야 함)
-        function tokenize(text) {
-            // 간단한 공백 기준 토크나이징 예시 (BERT에서는 더 복잡한 전처리가 필요)
-            return text.split(' ').map(word => word.charCodeAt(0));  // BERT 토크나이저는 다르게 구현됨
-        }
-
-        // 모델 로드
-        loadModel();
-    </script>
+  <h1>Transformers.js 예시</h1>
+  <div>
+    <p><strong>입력 문장:</strong> <span id="input-text">Hello, how are you?</span></p>
+    <p><strong>생성된 문장:</strong> <span id="generated-text">Loading...</span></p>
+  </div>
+  <script>
+    async function runModel() {
+      // 모델 로드 (GPT-2)
+      const model = await window.Transformers.load('gpt2');
+      
+      // 입력 텍스트 설정
+      const inputText = 'Hello, how are you?';
+      
+      // 텍스트 생성 (최대 50자까지)
+      const output = await model.generate(inputText, { max_length: 50 });
+      
+      // 생성된 텍스트 출력
+      document.getElementById('generated-text').innerText = output;
+    }
+    
+    runModel();
+  </script>
 </body>
 </html>
