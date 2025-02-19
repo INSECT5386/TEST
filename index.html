@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Transformers.js 예시</title>
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.3.3/dist/transformers.min.js"></script>
+  <title>Transformers.js Example</title>
+  <script type="module">
+    import { GPT2LMHeadModel, GPT2Tokenizer } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.3.0/dist/transformers.esm.js';
+  </script>
 </head>
 <body>
   <h1>Transformers.js 예시</h1>
@@ -14,19 +16,18 @@
   </div>
   <script type="module">
     async function runModel() {
-      // 'text-generation' 파이프라인 사용 (GPT-2 모델)
-      const model = await window.Transformers.pipeline('text-generation', 'gpt2');
+      const model = await GPT2LMHeadModel.fromPretrained('gpt2');
+      const tokenizer = await GPT2Tokenizer.fromPretrained('gpt2');
 
-      // 입력 텍스트 설정
       const inputText = 'Hello, how are you?';
+      const encoded = await tokenizer.encode(inputText);
       
-      // 텍스트 생성 (최대 50자까지)
-      const output = await model(inputText, { max_length: 50 });
-      
-      // 생성된 텍스트 출력
-      document.getElementById('generated-text').innerText = output[0].generated_text;
+      const output = await model.generate(encoded, { max_length: 50 });
+      const decodedOutput = await tokenizer.decode(output[0]);
+
+      document.getElementById('generated-text').innerText = decodedOutput;
     }
-    
+
     runModel();
   </script>
 </body>
