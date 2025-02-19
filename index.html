@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Transformers.js Example</title>
-  <script src="https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.3.3/dist/transformers.min.js"></script>
+  <title>Transformers.js 예시</title>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.3.3/dist/transformers.min.js"></script>
 </head>
 <body>
   <h1>Transformers.js 예시</h1>
@@ -12,19 +12,19 @@
     <p><strong>입력 문장:</strong> <span id="input-text">Hello, how are you?</span></p>
     <p><strong>생성된 문장:</strong> <span id="generated-text">Loading...</span></p>
   </div>
-  <script>
+  <script type="module">
     async function runModel() {
-      // 모델 로드 (GPT-2)
-      const model = await window.Transformers.load('gpt2');
-      
+      // 'text-generation' 파이프라인 사용 (GPT-2 모델)
+      const model = await window.Transformers.pipeline('text-generation', 'gpt2');
+
       // 입력 텍스트 설정
       const inputText = 'Hello, how are you?';
       
       // 텍스트 생성 (최대 50자까지)
-      const output = await model.generate(inputText, { max_length: 50 });
+      const output = await model(inputText, { max_length: 50 });
       
       // 생성된 텍스트 출력
-      document.getElementById('generated-text').innerText = output;
+      document.getElementById('generated-text').innerText = output[0].generated_text;
     }
     
     runModel();
