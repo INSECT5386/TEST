@@ -3,35 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TensorFlow.js Example</title>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script> <!-- TensorFlow.js -->
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/toxicity"></script> <!-- Example model -->
+  <title>BERT with TensorFlow.js</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-models"></script>
 </head>
 <body>
-  <h1>TensorFlow.js 예시</h1>
+  <h1>BERT 모델 사용 예시</h1>
   <div>
-    <p><strong>입력 문장:</strong> <span id="input-text">I love machine learning!</span></p>
-    <p><strong>결과:</strong> <span id="result-text">Loading...</span></p>
+    <p><strong>입력 문장:</strong> <span id="input-text">BERT is amazing!</span></p>
+    <p><strong>예측 결과:</strong> <span id="prediction">Loading...</span></p>
   </div>
-
+  
   <script>
-    // TensorFlow.js 모델 로드 및 사용 예시
-    async function runModel() {
-      // 모델 로드 (예시: Toxicity 모델)
-      const model = await toxicity.load();
-
-      // 입력 텍스트 설정
-      const inputText = 'I love machine learning!';
-
-      // 모델 실행
-      const predictions = await model.classify(inputText);
-
-      // 결과 출력
-      const resultText = predictions.map(prediction => `${prediction.label}: ${prediction.results[0].match}`).join('<br>');
-      document.getElementById('result-text').innerHTML = resultText;
+    async function loadModel() {
+      // TensorFlow.js로 BERT 모델 로드
+      const model = await tf.loadGraphModel('https://tfhub.dev/google/bert_uncased_L-12_H-768_A-12/1');
+      
+      // 예시 문장
+      const inputText = "BERT is amazing!";
+      
+      // BERT 토크나이저로 텍스트 변환
+      const tokenizer = await tf.text.BertTokenizer.fromPretrained('bert-base-uncased');
+      const inputIds = tokenizer.encode(inputText);
+      
+      // 예측
+      const output = await model.predict(inputIds);
+      
+      // 예측 결과 출력
+      document.getElementById('prediction').innerText = output;
     }
-
-    runModel();
+    
+    loadModel();
   </script>
 </body>
 </html>
