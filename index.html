@@ -1,45 +1,43 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BERT 챗봇</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/qna"></script>
+    <title>TFLite Chatbot</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.0.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite"></script>
 </head>
 <body>
-    <h1>BERT 기반 Q&A 시스템</h1>
-    <textarea id="context" rows="5" cols="50" placeholder="여기에 문맥을 입력하세요"></textarea><br>
-    <input type="text" id="question" placeholder="질문을 입력하세요">
-    <button onclick="answerQuestion()">답변하기</button>
-    <h2>답변: <span id="answer"></span></h2>
+    <h1>TensorFlow.js with TFLite Model</h1>
+    <input type="text" id="userInput" placeholder="Type your message" />
+    <button onclick="predictResponse()">Send</button>
+    <div id="response"></div>
 
     <script>
-        let model;
+        let tfliteModel;
 
+        // TFLite 모델 로드
         async function loadModel() {
-            console.log("모델을 로드하는 중...");
-            model = await qna.load();
-            console.log("BERT 모델 로드 완료!");
+            tfliteModel = await tf.loadTFLiteModel('your_model.tflite');
+            console.log("Model loaded successfully");
         }
 
-        async function answerQuestion() {
-            if (!model) {
-                alert("아직 모델이 로드되지 않았습니다!");
-                return;
-            }
-            const context = document.getElementById("context").value;
-            const question = document.getElementById("question").value;
+        // 사용자가 입력한 텍스트를 모델에 입력하여 예측을 실행하는 함수
+        async function predictResponse() {
+            const userInput = document.getElementById('userInput').value;
+            
+            // 텍스트 입력을 텐서로 변환 (예시로 입력 텍스트를 배열로 변환)
+            const inputTensor = tf.tensor([userInput.split('').map(c => c.charCodeAt(0))]);
 
-            const answers = await model.findAnswers(question, context);
-            console.log(answers);
-            if (answers.length > 0) {
-                document.getElementById("answer").innerText = answers[0].text;
-            } else {
-                document.getElementById("answer").innerText = "답변을 찾을 수 없습니다.";
-            }
+            // 모델 예측
+            const output = await tfliteModel.predict(inputTensor);
+
+            // 예측 결과 처리 (예시: 출력 텐서를 텍스트로 변환)
+            const response = output.dataSync();
+            document.getElementById('response').innerText = `Model response: ${String.fromCharCode(...response)}`;
         }
 
+        // 모델 로드 호출
         loadModel();
     </script>
 </body>
