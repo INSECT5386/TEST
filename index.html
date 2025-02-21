@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ONNX.js Chatbot</title>
+    <title>GPT-J ONNX Chatbot</title>
 
-    <!-- ONNX.js CDN 추가 -->
+    <!-- ONNX.js 라이브러리 로드 -->
     <script src="https://unpkg.com/onnxjs@1.5.1/dist/onnx.min.js"></script>
 </head>
 <body>
-    <h1>ONNX.js Chatbot</h1>
+    <h1>GPT-J Chatbot</h1>
     
     <div>
         <textarea id="inputText" rows="4" cols="50" placeholder="Type a message..."></textarea><br><br>
@@ -22,26 +22,27 @@
     </div>
 
     <script>
+        // ONNX 모델을 로드하고 실행하는 함수
         async function runChatbot() {
-            // onnx.js가 로드된 후 실행하도록 수정
+            // GPT-J 모델을 로드할 InferenceSession 객체 생성
             const session = new onnx.InferenceSession();
-            await session.loadModel("/assets/model.onnx"); // GPT 모델 로드
+            await session.loadModel("/assets/model.onnx"); // 모델 파일 경로 확인
 
-            // 사용자 입력
+            // 사용자 입력 텍스트
             const userInput = document.getElementById("inputText").value;
 
-            // 입력 텍스트를 모델이 이해할 수 있는 형식으로 변환 (예시)
-            const input_tensor = new onnx.Tensor(new TextEncoder().encode(userInput), 'string', [1, userInput.length]);
+            // 입력 텍스트를 Tensor 형태로 변환 (이 부분은 모델에 맞게 수정 필요)
+            const input_tensor = new onnx.Tensor(new TextEncoder().encode(userInput), 'int32', [1, userInput.length]);
 
             // 모델 실행
             const output = await session.run([input_tensor]);
 
-            // 결과 출력 (가공된 텍스트를 반환한다고 가정)
+            // 출력 결과 (여기서는 단순히 반환된 값 출력)
             const response = output.values().next().value.data;
             document.getElementById("responseText").innerText = new TextDecoder().decode(response);
         }
 
-        // 이벤트 리스너 (전송 버튼 클릭)
+        // 전송 버튼 클릭 시 runChatbot 함수 호출
         document.getElementById("sendButton").addEventListener("click", runChatbot);
     </script>
 </body>
