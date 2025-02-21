@@ -3,34 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ONNX.js Demo</title>
+    <title>ONNX.js Chatbot</title>
 </head>
 <body>
-    <h1>ONNX.js Model Inference</h1>
+    <h1>ONNX.js Chatbot</h1>
+    
     <div>
-        <p>Loading model...</p>
+        <textarea id="inputText" rows="4" cols="50" placeholder="Type a message..."></textarea><br><br>
+        <button id="sendButton">Send</button>
+    </div>
+    
+    <div>
+        <h2>Response:</h2>
+        <p id="responseText"></p>
     </div>
 
-    <!-- ONNX.js CDN 링크 -->
+    <!-- ONNX.js CDN -->
     <script src="https://unpkg.com/onnxjs@1.5.1/dist/onnx.min.js"></script>
     <script>
-        async function runInference() {
+        async function runChatbot() {
             const session = new onnx.InferenceSession();
-            await session.loadModel("/assets/model.onnx");  // 모델 경로
+            await session.loadModel("/assets/model.onnx"); // GPT 모델 로드
 
-            // 예시 입력 데이터 (여기서는 1x3x224x224 크기)
-            const input_data = new Float32Array(1 * 3 * 224 * 224); // 실제 입력 데이터를 여기에 넣으세요
-            const input_tensor = new onnx.Tensor(input_data, 'float32', [1, 3, 224, 224]);
+            // 사용자 입력
+            const userInput = document.getElementById("inputText").value;
 
-            // 모델 추론 실행
+            // 입력 텍스트를 모델이 이해할 수 있는 형식으로 변환 (예시)
+            const input_tensor = new onnx.Tensor(new TextEncoder().encode(userInput), 'string', [1, userInput.length]);
+
+            // 모델 실행
             const output = await session.run([input_tensor]);
 
-            // 결과 출력
-            console.log(output);
-            alert("Inference finished! Check console for results.");
+            // 결과 출력 (가공된 텍스트를 반환한다고 가정)
+            const response = output.values().next().value.data;
+            document.getElementById("responseText").innerText = new TextDecoder().decode(response);
         }
 
-        runInference();
+        // 이벤트 리스너 (전송 버튼 클릭)
+        document.getElementById("sendButton").addEventListener("click", runChatbot);
     </script>
 </body>
 </html>
