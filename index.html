@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ONNX.js Chatbot</title>
+
+    <!-- ONNX.js CDN 추가 -->
+    <script src="https://unpkg.com/onnxjs@1.5.1/dist/onnx.min.js"></script>
 </head>
 <body>
     <h1>ONNX.js Chatbot</h1>
@@ -18,10 +21,9 @@
         <p id="responseText"></p>
     </div>
 
-    <!-- ONNX.js CDN -->
-    <script src="https://unpkg.com/onnxjs@1.5.1/dist/onnx.min.js"></script>
     <script>
         async function runChatbot() {
+            // onnx.js가 로드된 후 실행하도록 수정
             const session = new onnx.InferenceSession();
             await session.loadModel("/assets/model.onnx"); // GPT 모델 로드
 
