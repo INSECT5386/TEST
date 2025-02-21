@@ -3,42 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TFLite Chatbot</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.0.0"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite"></script>
+    <title>ONNX.js Demo</title>
 </head>
 <body>
-    <h1>TensorFlow.js with TFLite Model</h1>
-    <input type="text" id="userInput" placeholder="Type your message" />
-    <button onclick="predictResponse()">Send</button>
-    <div id="response"></div>
+    <h1>ONNX.js Model Inference</h1>
+    <div>
+        <p>Loading model...</p>
+    </div>
 
+    <!-- ONNX.js CDN 링크 -->
+    <script src="https://unpkg.com/onnxjs@1.5.1/dist/onnx.min.js"></script>
     <script>
-        let tfliteModel;
+        async function runInference() {
+            const session = new onnx.InferenceSession();
+            await session.loadModel("/assets/model.onnx");  // 모델 경로
 
-        // TFLite 모델 로드
-        async function loadModel() {
-            tfliteModel = await tf.loadTFLiteModel('your_model.tflite');
-            console.log("Model loaded successfully");
+            // 예시 입력 데이터 (여기서는 1x3x224x224 크기)
+            const input_data = new Float32Array(1 * 3 * 224 * 224); // 실제 입력 데이터를 여기에 넣으세요
+            const input_tensor = new onnx.Tensor(input_data, 'float32', [1, 3, 224, 224]);
+
+            // 모델 추론 실행
+            const output = await session.run([input_tensor]);
+
+            // 결과 출력
+            console.log(output);
+            alert("Inference finished! Check console for results.");
         }
 
-        // 사용자가 입력한 텍스트를 모델에 입력하여 예측을 실행하는 함수
-        async function predictResponse() {
-            const userInput = document.getElementById('userInput').value;
-            
-            // 텍스트 입력을 텐서로 변환 (예시로 입력 텍스트를 배열로 변환)
-            const inputTensor = tf.tensor([userInput.split('').map(c => c.charCodeAt(0))]);
-
-            // 모델 예측
-            const output = await tfliteModel.predict(inputTensor);
-
-            // 예측 결과 처리 (예시: 출력 텐서를 텍스트로 변환)
-            const response = output.dataSync();
-            document.getElementById('response').innerText = `Model response: ${String.fromCharCode(...response)}`;
-        }
-
-        // 모델 로드 호출
-        loadModel();
+        runInference();
     </script>
 </body>
 </html>
