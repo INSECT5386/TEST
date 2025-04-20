@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="module">
+        import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
+        const client = await Client.connect("Yuchan5386/Kossistant-1");
+        const result = await client.predict("/chat_respond", {
+            text: "안녕"
+        });
+        console.log(result);
+    </script>
+</head>
+</html>
